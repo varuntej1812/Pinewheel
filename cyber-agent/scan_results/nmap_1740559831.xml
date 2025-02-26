@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///C:/Program Files (x86)/Nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.95 scan initiated Wed Feb 26 14:20:31 2025 as: nmap -p 1-1000 -T4 -oX scan_results\\nmap_1740559831.xml example.com -->
+<nmaprun scanner="nmap" args="nmap -p 1-1000 -T4 -oX scan_results\\nmap_1740559831.xml example.com" start="1740559831" startstr="Wed Feb 26 14:20:31 2025" version="7.95" xmloutputversion="1.05">
+<scaninfo type="syn" protocol="tcp" numservices="1000" services="1-1000"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<hosthint><status state="up" reason="unknown-response" reason_ttl="0"/>
+<address addr="96.7.128.198" addrtype="ipv4"/>
+<hostnames>
+<hostname name="example.com" type="user"/>
+</hostnames>
+</hosthint>
+<host starttime="1740559833" endtime="1740559842"><status state="up" reason="syn-ack" reason_ttl="64"/>
+<address addr="96.7.128.198" addrtype="ipv4"/>
+<hostnames>
+<hostname name="example.com" type="user"/>
+<hostname name="a96-7-128-198.deploy.static.akamaitechnologies.com" type="PTR"/>
+</hostnames>
+<ports><extraports state="filtered" count="995">
+<extrareasons reason="no-response" count="982" proto="tcp" ports="1-21,23-24,26-63,65-79,81-109,111,113-132,134-138,140-142,144-249,251-255,257-315,317-380,382-407,409-442,444,446-782,784-994,996-1000"/>
+<extrareasons reason="port-unreach" count="13" proto="tcp" ports="22,64,112,133,139,143,250,256,316,381,408,445,783"/>
+</extraports>
+<port protocol="tcp" portid="25"><state state="closed" reason="reset" reason_ttl="64"/><service name="smtp" method="table" conf="3"/></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" method="table" conf="3"/></port>
+<port protocol="tcp" portid="110"><state state="closed" reason="reset" reason_ttl="64"/><service name="pop3" method="table" conf="3"/></port>
+<port protocol="tcp" portid="443"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="https" method="table" conf="3"/></port>
+<port protocol="tcp" portid="995"><state state="closed" reason="reset" reason_ttl="64"/><service name="pop3s" method="table" conf="3"/></port>
+</ports>
+<times srtt="24224" rttvar="32456" to="154048"/>
+</host>
+<runstats><finished time="1740559842" timestr="Wed Feb 26 14:20:42 2025" summary="Nmap done at Wed Feb 26 14:20:42 2025; 1 IP address (1 host up) scanned in 10.68 seconds" elapsed="10.68" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

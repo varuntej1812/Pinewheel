@@ -1,0 +1,8 @@
+# Create meaningful test entries
+@"
+/
+/robots.txt
+/admin
+/login
+/wp-admin
+"@ | Out-File -FilePath wordlists/common.txt -Encoding utf8
