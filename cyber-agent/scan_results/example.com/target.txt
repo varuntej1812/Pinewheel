@@ -1,1 +1,0 @@
-http://example.com (GET)  # C:\Users\Shiva\cyber-agent\venv\Scripts\sqlmap -u http://example.com --batch --output-dir=scan_results

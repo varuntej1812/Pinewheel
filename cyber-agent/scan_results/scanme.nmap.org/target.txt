@@ -1,0 +1,1 @@
+http://scanme.nmap.org (GET)  # C:\Users\Shiva\cyber-agent\venv\Scripts\sqlmap -u http://scanme.nmap.org --batch --output-dir=scan_results
