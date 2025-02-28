@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///C:/Program Files (x86)/Nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.95 scan initiated Thu Feb 27 08:53:37 2025 as: nmap -p 1-1000 -T4 -oX scan_results\\nmap_1740626616.xml scanme.nmap.org -->
+<nmaprun scanner="nmap" args="nmap -p 1-1000 -T4 -oX scan_results\\nmap_1740626616.xml scanme.nmap.org" start="1740626617" startstr="Thu Feb 27 08:53:37 2025" version="7.95" xmloutputversion="1.05">
+<scaninfo type="syn" protocol="tcp" numservices="1000" services="1-1000"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<hosthint><status state="up" reason="unknown-response" reason_ttl="0"/>
+<address addr="45.33.32.156" addrtype="ipv4"/>
+<hostnames>
+<hostname name="scanme.nmap.org" type="user"/>
+</hostnames>
+</hosthint>
+<host starttime="1740626617" endtime="1740626620"><status state="up" reason="reset" reason_ttl="63"/>
+<address addr="45.33.32.156" addrtype="ipv4"/>
+<hostnames>
+<hostname name="scanme.nmap.org" type="user"/>
+<hostname name="scanme.nmap.org" type="PTR"/>
+</hostnames>
+<ports><extraports state="closed" count="998">
+<extrareasons reason="reset" count="998" proto="tcp" ports="1-21,23-79,81-1000"/>
+</extraports>
+<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="46"/><service name="ssh" method="table" conf="3"/></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="45"/><service name="http" method="table" conf="3"/></port>
+</ports>
+<times srtt="262318" rttvar="7468" to="292190"/>
+</host>
+<runstats><finished time="1740626620" timestr="Thu Feb 27 08:53:40 2025" summary="Nmap done at Thu Feb 27 08:53:40 2025; 1 IP address (1 host up) scanned in 3.09 seconds" elapsed="3.09" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

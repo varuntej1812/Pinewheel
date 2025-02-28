@@ -65,29 +65,28 @@ if st.button("Start Security Audit"):
     })
     st.rerun()
 
-# Workflow execution
-# In the workflow execution section:
+
 if st.session_state.wf_state['running']:
     try:
         start_time = time.time()
-        MAX_RUNTIME = 300  # 5 minutes timeout
-
+        MAX_RUNTIME = 300  # 5 minutes
+        
         while st.session_state.wf_state['running']:
-            # Execute with timeout controls
+            # Force state update before invocation
+            st.session_state.wf_state = dict(st.session_state.wf_state)
+            
             app.invoke(
                 st.session_state.wf_state,
                 config={"recursion_limit": MAX_ITERATIONS}
             )
             
-            # Force state update
+            # Force state update after invocation
             st.session_state.wf_state = dict(st.session_state.wf_state)
             
             # Check timeout
             if time.time() - start_time > MAX_RUNTIME:
-                st.session_state.wf_state.update({
-                    'running': False,
-                    'logs': st.session_state.wf_state['logs'] + ["🛑 System timeout - audit stopped"]
-                })
+                st.session_state.wf_state['running'] = False
+                st.session_state.wf_state['logs'].append("⏰ Timeout reached")
                 break
 
             # Check completion
@@ -96,54 +95,39 @@ if st.session_state.wf_state['running']:
                 for task in st.session_state.wf_state['tasks']
             )
             
-            if not pending_tasks or st.session_state.wf_state['iteration'] >= MAX_ITERATIONS:
-                st.session_state.wf_state.update({
-                    'running': False,
-                    'logs': st.session_state.wf_state['logs'] + ["✅ Audit completed successfully"]
-                })
+            if not pending_tasks:
+                st.session_state.wf_state['running'] = False
+                st.session_state.wf_state['logs'].append("✅ Audit complete")
                 break
                 
-            # Controlled refresh
-            time.sleep(0.5)
             st.rerun()
 
     except Exception as e:
-        st.session_state.wf_state.update({
-            'running': False,
-            'logs': st.session_state.wf_state['logs'] + [f"🔥 Critical failure: {str(e)}"]
-        })
-        st.error(f"❌ Workflow execution failed: {str(e)}")
-        st.code(traceback.format_exc())
+        st.session_state.wf_state['running'] = False
+        st.error(f"Critical failure: {str(e)}")
 
-# Display panels
-col1, col2 = st.columns([2, 3])
+# Display results
+col1, col2 = st.columns([3, 2])
 
 with col1:
-    st.subheader("Audit Progress Logs")
-    log_container = st.container(height=600)
-    if st.session_state.wf_state['logs']:
-        for log in reversed(st.session_state.wf_state['logs']):
-            log_container.code(log, language="log")
-    else:
-        log_container.info("No audit logs yet")
+    st.subheader("Audit Logs")
+    log_container = st.container(height=400)
+    for log in reversed(st.session_state.wf_state.get('logs', [])):
+        log_container.markdown(f"`{log}`")
 
 with col2:
     st.subheader("Scan Results")
-    
     if st.session_state.wf_state['results']:
-        tabs = st.tabs([f"Results for {target}" for target in st.session_state.wf_state['results'].keys()])
-        
-        for tab, (target, results) in zip(tabs, st.session_state.wf_state['results'].items()):
-            with tab:
-                st.subheader(f"Scan results for {target}")
-                for tool, output in results.items():
-                    with st.expander(f"{tool.upper()} Results", expanded=True):
-                        if isinstance(output, dict):
-                            st.json(output)
-                        else:
-                            st.text(str(output))
+        for target, scans in st.session_state.wf_state['results'].items():
+            with st.expander(f"Results for {target}", expanded=True):
+                for tool, result in scans.items():
+                    st.markdown(f"**{tool.upper()}**")
+                    if isinstance(result, dict):
+                        st.json(result)
+                    else:
+                        st.text(str(result))
     else:
-        st.info("No scan results available yet. Start an audit to see results.")
+        st.info("No results yet. Start an audit to begin scanning.")
 
 # System status
 st.sidebar.divider()

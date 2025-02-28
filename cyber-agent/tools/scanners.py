@@ -1,4 +1,4 @@
-# scanners.py
+
 import subprocess
 import json
 import time
@@ -8,18 +8,18 @@ from typing import Dict, Any
 from threading import Timer
 
 SCAN_OUTPUT_DIR = Path("scan_results")
-SCAN_OUTPUT_DIR.mkdir(exist_ok=True)
+SCAN_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 class SecurityScanner:
     @staticmethod
     def run_command(cmd: list[str], timeout: int) -> Dict[str, Any]:
-        """Execute command with proper subprocess handling"""
         try:
             proc = subprocess.Popen(
                 cmd,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                text=True
+                text=True,
+                shell=True  # Required for Windows
             )
             timer = Timer(timeout, proc.kill)
             timer.start()
@@ -38,11 +38,7 @@ class SecurityScanner:
 class NmapScanner(SecurityScanner):
     @staticmethod
     def run(target: str, timeout: int = 120) -> Dict[str, Any]:
-        """Run Nmap scan with validation"""
         try:
-            if not any(c in target for c in ['.', ':']):
-                return {"success": False, "error": "Invalid target format"}
-            
             output_file = SCAN_OUTPUT_DIR / f"nmap_{int(time.time())}.xml"
             cmd = [
                 "nmap",
@@ -53,7 +49,6 @@ class NmapScanner(SecurityScanner):
             ]
             
             result = SecurityScanner.run_command(cmd, timeout)
-            
             if not result["success"]:
                 return result
 
@@ -65,54 +60,51 @@ class NmapScanner(SecurityScanner):
                         "port": port.get("portid"),
                         "state": port.find("state").get("state"),
                         "service": port.find("service").get("name", "unknown")
-                    } 
-                    for port in tree.findall(".//port")
+                    } for port in tree.findall(".//port")
                 ]
             }
-        except ET.ParseError as e:
-            return {"success": False, "error": f"XML parse error: {str(e)}"}
         except Exception as e:
             return {"success": False, "error": str(e)}
 
 class GobusterScanner(SecurityScanner):
     @staticmethod
     def run(target: str, timeout: int = 180) -> Dict[str, Any]:
-        """Directory/file brute-force scanner"""
         try:
             output_file = SCAN_OUTPUT_DIR / f"gobuster_{int(time.time())}.json"
             wordlist = Path("wordlists/common.txt").absolute()
             
             if not wordlist.exists():
-                return {"success": False, "error": "Wordlist not found"}
+                return {"success": False, "error": f"Wordlist not found at {wordlist}"}
 
             cmd = [
                 "gobuster", "dir",
                 "-u", target,
                 "-w", str(wordlist),
                 "-o", str(output_file),
-                "-b", "302,404,500",
-                "--no-error",
-                "-z"
+                "--json",
+                "-t", "50",
+                "-k",
+                "--status-codes", "200,204,301,302,307,401,403"
             ]
             
             result = SecurityScanner.run_command(cmd, timeout)
             
             if not result["success"]:
-                return result
+                error_details = f"STDOUT: {result['stdout']}\nSTDERR: {result['stderr']}"
+                return {"success": False, "error": error_details}
 
-            with open(output_file) as f:
-                try:
-                    findings = json.load(f)
-                    return {
-                        "success": True,
-                        "directories": [res["path"] for res in findings.get("results", [])]
-                    }
-                except json.JSONDecodeError:
-                    return {"success": False, "error": "Invalid JSON output"}
+            try:
+                with open(output_file, 'r') as f:
+                    data = json.load(f)
+                    directories = [item["path"] for item in data.get("results", [])]
+                    return {"success": True, "directories": directories}
+            except Exception as e:
+                return {"success": False, "error": f"Output parsing failed: {str(e)}"}
 
         except Exception as e:
             return {"success": False, "error": str(e)}
 
+# [Keep FFUF and SQLMap implementations similar to previous]
 
 
         

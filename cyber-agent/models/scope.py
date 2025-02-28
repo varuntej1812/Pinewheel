@@ -10,15 +10,13 @@ class ScopeValidator:
         self.definition = definition
         
     def validate_target(self, target: str) -> bool:
-        """Validate if target matches scope rules"""
+        """Validation logic without workflow dependencies"""
         try:
-            # Check if target is an IP address
             ip = ip_address(target)
             for network in self.definition.ip_ranges:
                 if ip in ip_network(network):
                     return True
         except ValueError:
-            # Check if target is a domain
             for domain in self.definition.domains:
                 if target.endswith(domain):
                     return True
