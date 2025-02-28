@@ -17,17 +17,17 @@ This project implements an **agentic cybersecurity workflow** using LangGraph an
 
 2. **Install Security Tools**:
 
-Nmap
-Gobuster
-FFuf
+Nmap,
+Gobuster,
+FFuf,
 SQLMap
 
 3.**Run the application**:
 
 streamlit run streamlit_app.py
 
-
 System Design
+
 Scope Enforcement:
 
 Validates targets against user-defined domains/IP ranges.
@@ -50,14 +50,16 @@ Dynamic Updates:
 
 Adds new tasks based on scan results (e.g., gobuster after nmap).
 
-Limitations
+Limitations:
+
 Limited to basic scans (nmap, gobuster, ffuf, sqlmap).
 
 Requires manual scope configuration.
 
 Performance depends on target responsiveness.
 
-Future Improvements
+Future Improvements:
+
 Add more security tools (e.g., nikto, wpscan).
 
 Implement parallel task execution.
@@ -66,7 +68,8 @@ Add a database for storing scan results.
 
 Improve error handling for edge cases.
 
-Benchmarks
+Benchmarks:
+
 Average Scan Time: ~2-5 minutes per target.
 
 Scope Adherence: 100% in all test cases.
